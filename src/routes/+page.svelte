@@ -1,2 +1,12 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<svelte:head>
+	<title>Todo</title>
+	<meta name="description" content="It's a todo app..." />
+</svelte:head>
+
+<h1>Todo List</h1>
+
+<style>
+	h1 {
+		text-align: center;
+	}
+</style>

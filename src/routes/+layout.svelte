@@ -24,7 +24,9 @@
 		<img src={github} alt="" width="30" height="30" />
 	</a> -->
 
-	<img class="header-item" src={logo} alt="logo_svg" />
+	<a href="https://kit.svelte.dev/">
+		<img class="header-item" src={logo} alt="logo_svg" />
+	</a>
 
 	<select class="header-item" bind:value={$theme}>
 		<option value="system">System</option>
@@ -33,9 +35,9 @@
 	</select>
 </header>
 
-<div class="content-container">
+<main>
 	<slot></slot>
-</div>
+</main>
 
 <style>
 	:global(*) {
@@ -45,12 +47,13 @@
 	}
 
 	:root {
+		font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 		font-size: 62.5%;
 	}
 
 	:global(body) {
 		font-size: 1.6rem;
-		font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+		height: 100dvh;
 	}
 
 	:global(body.light-theme) {
@@ -63,7 +66,8 @@
 	}
 
 	:global(body.dark-theme) {
-		--background-color: #4e4e4e;
+		--header-background-color: #1c1c1c;
+		--background-color: #2c2c2c;
 		--text-color: #e6e6e6;
 		--hover-color: gray;
 
@@ -81,6 +85,12 @@
 		padding: 10px 15px;
 		height: 50px;
 		border-bottom: 1px solid var(--text-color);
+		background: var(--header-background-color);
+	}
+
+	img {
+		height: 100%;
+		width: 100%;
 	}
 
 	select {
@@ -92,7 +102,9 @@
 		background-color: var(--hover-color);
 	}
 
-	.content-container {
+	main {
+		height: calc(100dvh - 50px);
 		padding: 20px;
+		/* align-content: center; */
 	}
 </style>

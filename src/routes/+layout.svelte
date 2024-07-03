@@ -1,39 +1,8 @@
 <script>
-	import { onMount } from 'svelte';
-	import { theme } from '$lib/stores/themeStore';
-
-	import logo from '$lib/images/svelte-logo.svg';
-	import github from '$lib/images/github.svg';
-
-	onMount(() => {
-		theme.subscribe((value) => {
-			document.body.classList.remove('light-theme', 'dark-theme', 'system');
-
-			const systemPreferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-				? 'dark-theme'
-				: 'light-theme';
-
-			const themeToApply = value === 'system' ? systemPreferredTheme : value;
-			document.body.classList.add(themeToApply);
-		});
-	});
+	import Header from '../lib/components/Header.svelte';
 </script>
 
-<header>
-	<!-- <a href="https://github.com/emir-masinovic">
-		<img src={github} alt="" width="30" height="30" />
-	</a> -->
-
-	<a href="https://kit.svelte.dev/">
-		<img class="header-item" src={logo} alt="logo_svg" />
-	</a>
-
-	<select class="header-item" bind:value={$theme}>
-		<option value="system">System</option>
-		<option value="light-theme">Light</option>
-		<option value="dark-theme">Dark</option>
-	</select>
-</header>
+<Header></Header>
 
 <main>
 	<slot></slot>
@@ -56,55 +25,73 @@
 		height: 100dvh;
 	}
 
-	:global(body.light-theme) {
-		--background-color: #f6f6f6;
-		--text-color: #555555;
-		--hover-color: gray;
+	:global(body.dark-theme) {
+		/* 
+		Generated from: https://colorffy.com/dark-theme-generator
+		
+		Dark/Mixed - 100: For body background color
+		Dark/Mixed - 200: For cards background color
+		Dark/Mixed - 300: For chips buttons, dropdowns background color
+		Dark/Mixed - 400: For sidebars, navbar background color
+		Dark/Mixed - 500: For modal, dialogs background color
+		Dark/Mixed - 600: For on background texts color 
+		*/
 
-		background-color: var(--background-color);
-		color: var(--text-color);
+		--color-primary-000: #f5f5f5;
+		--color-primary-100: #f02b2b;
+		--color-primary-200: #f64f40;
+		--color-primary-300: #fc6956;
+		--color-primary-400: #ff816d;
+		--color-primary-500: #ff9784;
+		--color-primary-600: #ffad9b;
+
+		--color-surface-100: #121212;
+		--color-surface-200: #282828;
+		--color-surface-300: #3f3f3f;
+		--color-surface-400: #575757;
+		--color-surface-500: #717171;
+		--color-surface-600: #8b8b8b;
+
+		--color-surface-mixed-100: #271815;
+		--color-surface-mixed-200: #3c2d2a;
+		--color-surface-mixed-300: #524441;
+		--color-surface-mixed-400: #685c59;
+		--color-surface-mixed-500: #807572;
+		--color-surface-mixed-600: #988f8d;
+
+		color: var(--color-primary-000);
+		background: var(--color-surface-100);
 	}
 
-	:global(body.dark-theme) {
-		--header-background-color: #1c1c1c;
-		--background-color: #2c2c2c;
-		--text-color: #e6e6e6;
-		--hover-color: gray;
+	:global(body.light-theme) {
+		--color-primary-000: black;
+		--color-primary-100: #2b7af0;
+		--color-primary-200: #5488f2;
+		--color-primary-300: #7095f4;
+		--color-primary-400: #88a4f6;
+		--color-primary-500: #9eb2f8;
+		--color-primary-600: #b3c1fa;
 
-		background-color: var(--background-color);
-		color: var(--text-color);
+		--color-surface-100: #f0f0f0;
+		--color-surface-200: #f2f2f2;
+		--color-surface-300: #f3f3f3;
+		--color-surface-400: #f5f5f5;
+		--color-surface-500: #f7f7f7;
+		--color-surface-600: #f8f8f8;
+
+		--color-surface-mixed-100: #c2cbf1;
+		--color-surface-mixed-200: #c9d1f3;
+		--color-surface-mixed-300: #d0d6f4;
+		--color-surface-mixed-400: #d6dcf6;
+		--color-surface-mixed-500: #dde2f7;
+		--color-surface-mixed-600: #e4e8f9;
+
+		color: var(--color-primary-000);
+		background: var(--color-surface-100);
 	}
 
 	:global(a) {
 		color: inherit;
-	}
-
-	header {
-		display: flex;
-		justify-content: space-between;
-		padding: 10px 15px;
-		height: 50px;
-		border-bottom: 1px solid var(--text-color);
-		background: var(--header-background-color);
-	}
-
-	img {
-		height: 100%;
-		width: 100%;
-	}
-
-	select {
-		padding: 5px;
-	}
-
-	select:hover {
-		cursor: pointer;
-		background-color: var(--hover-color);
-	}
-
-	main {
-		height: calc(100dvh - 50px);
-		padding: 20px;
-		/* align-content: center; */
+		text-decoration: none;
 	}
 </style>

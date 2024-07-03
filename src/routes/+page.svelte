@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { CheckSquare, CheckSquareFill, Square, Trash } from 'svelte-bootstrap-icons';
+	import { CheckSquare, CheckSquareFill, Key, Square, Trash } from 'svelte-bootstrap-icons';
 	import { v4 as uuidv4 } from 'uuid';
 
 	// $: console.log('Todo array: ', todoArray);
@@ -142,7 +142,13 @@
 <div class="wrapper">
 	<div class="todo-container">
 		<div class="todo-header">
-			<input on:keypress={addTodo} type="text" id="userInput" />
+			<input
+				on:keypress={(event) => {
+					if (event.keyCode === 13) addTodo();
+				}}
+				type="text"
+				id="userInput"
+			/>
 			<button on:pointerdown={addTodo}>+</button>
 		</div>
 
@@ -220,10 +226,12 @@
 		border: none;
 		font-family: inherit;
 		font-size: inherit;
+		background-color: var(--input-bg);
+		color: inherit;
 	}
 
 	.todo-header button {
-		background: var(--color-primary-500);
+		background: var(--button-bg);
 		padding: 0 20px;
 		border: none;
 		font-size: inherit;
@@ -231,13 +239,13 @@
 	}
 
 	.todo-header button:hover {
-		background: var(--color-surface-300);
-		color: var(--color-primary-500);
+		background: var(--button-hover-bg);
+		color: var(--button-hover-text);
 		scale: 0.9;
 	}
 
 	.todo-item {
-		background: var(--color-surface-mixed-300);
+		background: var(--todo);
 		padding: 10px;
 		margin-bottom: 10px;
 	}
@@ -247,7 +255,7 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 10px;
-		border-bottom: 1px solid var(--color-surface-600);
+		border-bottom: 1px solid var(--border);
 		margin-bottom: 5px;
 		padding-bottom: 5px;
 	}
@@ -258,7 +266,7 @@
 	}
 
 	.item-button {
-		color: var(--text-color);
+		color: inherit;
 		width: 18px;
 		height: 18px;
 		border: none;
@@ -267,8 +275,8 @@
 	}
 
 	.item-button:hover {
-		color: var(--color-primary-500);
-		scale: 0.95;
+		color: var(--button-svg-hover-bg);
+		scale: 0.9;
 	}
 
 	.pagination {
@@ -278,18 +286,24 @@
 	}
 
 	.pagination a {
-		background: var(--color-surface-mixed-300);
+		background: var(--pagination-bg);
+		color: var(--pagination-text);
 		padding: 5px 0px;
 		width: 20%;
 	}
 
-	.pagination a.active {
-		background: var(--color-surface-mixed-400);
-		color: var(--color-primary-300);
+	.pagination a:hover:not(.active) {
+		background: var(--pagination-hover-bg);
+		color: var(--pagination-hover-text);
 	}
 
-	.pagination a:hover:not(.active) {
-		background: var(--color-primary-500);
-		color: var(--color-surface-200);
+	.pagination a.active {
+		background: var(--pagination-active-bg);
+		color: var(--pagination-active-text);
+	}
+
+	.pagination a.active:hover {
+		background: var(--pagination-active-hover-bg);
+		color: var(--pagination-active-hover-text);
 	}
 </style>

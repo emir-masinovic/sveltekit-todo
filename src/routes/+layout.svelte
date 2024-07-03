@@ -59,8 +59,40 @@
 		--color-surface-mixed-500: #807572;
 		--color-surface-mixed-600: #988f8d;
 
-		color: var(--color-primary-000);
-		background: var(--color-surface-100);
+		--background: #121212;
+		--text: #f5f5f5;
+
+		/* Header */
+		--header: #524441;
+		--select-bg: #ff9784;
+		--select-text: var(--background);
+		--select-hover-bg: var(--background);
+		--select-hover-text: var(--text);
+
+		/* Input and button */
+		--input-bg: var(--header);
+		--button-bg: var(--select-bg);
+		--button-hover-bg: var(--header);
+		--button-hover-text: black;
+
+		/* Todo items */
+		--todo: #524441;
+		--border: #8b8b8b;
+		--button-svg-hover-bg: var(--select-bg);
+
+		/* Pagination */
+		--pagination-bg: var(--header);
+		--pagination-text: var(--text);
+		--pagination-hover-bg: var(--select-bg);
+		--pagination-hover-text: var(--background);
+
+		--pagination-active-bg: var(--select-bg);
+		--pagination-active-text: var(--text);
+		--pagination-active-hover-bg: var(--select-bg);
+		--pagination-active-hover-text: var(--text);
+
+		color: var(--text);
+		background: var(--background);
 	}
 
 	:global(body.light-theme) {
@@ -84,10 +116,42 @@
 		--color-surface-mixed-300: #d0d6f4;
 		--color-surface-mixed-400: #d6dcf6;
 		--color-surface-mixed-500: #dde2f7;
-		--color-surface-mixed-600: #e4e8f9;
+		--color-surface-mixed-600: #dde2f7;
 
-		color: var(--color-primary-000);
-		background: var(--color-surface-100);
+		--background: #f3f3f3;
+		--text: #1f1f1f;
+
+		/* Header */
+		--header: #9eb2f8;
+		--select-bg: #5488f2;
+		--select-text: var(--text);
+		--select-hover-bg: var(--background);
+		--select-hover-text: var(--text);
+
+		/* Input and button */
+		--input-bg: var(--header);
+		--button-bg: var(--select-bg);
+		--button-hover-bg: var(--header);
+		--button-hover-text: black;
+
+		/* Todo items */
+		--todo: #9eb2f8;
+		--border: #757575;
+		--button-svg-hover-bg: var(--background);
+
+		/* Pagination */
+		--pagination-bg: var(--header);
+		--pagination-text: var(--text);
+		--pagination-hover-bg: var(--select-bg);
+		--pagination-hover-text: var(--background);
+
+		--pagination-active-bg: var(--select-bg);
+		--pagination-active-text: var(--text);
+		--pagination-active-hover-bg: var(--select-bg);
+		--pagination-active-hover-text: var(--text);
+
+		color: var(--text);
+		background: var(--background);
 	}
 
 	:global(a) {

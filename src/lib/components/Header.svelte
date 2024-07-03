@@ -29,7 +29,7 @@
 
 <style>
 	header {
-		background: var(--color-surface-mixed-300);
+		background: var(--header);
 		height: 50px;
 		display: flex;
 		justify-content: space-between;
@@ -46,14 +46,15 @@
 	}
 
 	select {
-		background: var(--color-primary-500);
+		background: var(--select-bg);
+		color: var(--select-text);
 		padding: 0 5px;
 		border: none;
 	}
 
 	select:hover {
 		cursor: pointer;
-		background: var(--color-surface-100);
-		color: var(--color-primary-500);
+		background: var(--select-hover-bg);
+		color: var(--select-hover-text);
 	}
 </style>

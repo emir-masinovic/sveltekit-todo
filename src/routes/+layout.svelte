@@ -76,9 +76,13 @@
 		--button-hover-text: black;
 
 		/* Todo items */
-		--todo: #524441;
+		--todo-bg: #524441;
+		--todo-completed-bg: #3c2d2a;
 		--border: #8b8b8b;
 		--button-svg-hover-bg: var(--select-bg);
+		--scrollbar-track-bg: #3c2d2a;
+		--scrollbar-thumb-bg: var(--todo-bg);
+		--scrollbar-thumb-hover-bg: var(--todo-bg);
 
 		/* Pagination */
 		--pagination-bg: var(--header);
@@ -135,9 +139,12 @@
 		--button-hover-text: black;
 
 		/* Todo items */
-		--todo: #9eb2f8;
+		--todo-bg: #9eb2f8;
 		--border: #757575;
 		--button-svg-hover-bg: var(--background);
+		--scrollbar-track-bg: #c2cbf1;
+		--scrollbar-thumb-bg: var(--todo-bg);
+		--scrollbar-thumb-hover-bg: var(--todo-bg);
 
 		/* Pagination */
 		--pagination-bg: var(--header);

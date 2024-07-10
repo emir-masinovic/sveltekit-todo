@@ -7,10 +7,59 @@
 	// $: console.log('Error', fetchError);
 
 	let todoArray = [];
+	let todoArrayTime = 0;
+	let todoArrayOverrides = [];
+	$: todoArrayView = mergeLists(todoArray, todoArrayOverrides);
 	let fetchError = null;
 	let getQueue = [];
 
 	let inactivityTimeout = null;
+
+
+	
+	// same as the main list but:
+	// if an item is in override list and not in main list, add it in the result
+	// if an item is in override list but it has deleted: true, remove it in the result
+	// if there is an item in the overrides with the same id as an item in the main list, use the one in the overrides
+	function areSameTodoItems(a, b){
+		let idsDefined = a._id?.$oid !== undefined &&
+			b._id?.$oid !== undefined &&
+			a._id?.$oid !== null &&
+			b._id?.$oid !== null;
+		
+		let idsEqual = a._id.$oid === b._id.$oid;
+		
+		let titlesEqual = a.title == b.title;
+		
+		return idsDefined && idsEqual || !idsDefined && titlesEqual;
+	}
+	function mergeLists(main, overrides) {
+		// clone main
+		let result = main.map((item) => ({ ...item }));
+		
+		// add items from overrides that are not in main
+		for (let override of overrides) {
+			if (!main.some((item) => areSameTodoItems(item, override))) {
+				result.push({ ...override });
+			}
+		}
+		
+		// remove items from result that are in overrides and have deleted: true
+		result = result.filter((item) => {
+			let override = overrides.find((override) => areSameTodoItems(item, override));
+			return override === undefined || override.deleted !== true;
+		});
+		
+		// replace items in result with items from overrides
+		for (let override of overrides) {
+			let index = result.findIndex((item) => areSameTodoItems(item, override));
+			if (index !== -1) {
+				result[index] = { ...override };
+			}
+		}
+		
+		return result;
+	}
 
 	// function resetInactivityTimer() {
 	// 	clearTimeout(inactivityTimeout);
@@ -63,9 +112,13 @@
 	async function getTodoArray() {
 		// prettier-ignore
 		try {
+			let time = Math.floor(Date.now() / 1000);
 			const response = await fetch('/api/todo_items');
 			if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
 			todoArray = await response.json();
+			todoArrayTime = Math.floor(Date.now() / 1000);
+			//todoArrayTime = time;
+			
 		} catch (error) { fetchError = error; }
 	}
 
@@ -83,11 +136,13 @@
 			created_time_utc: unixTimestamp,
 			owner_user_id: null,
 			title: userInput,
-			_id: { $oid: uuidv4() }
+			_id: { $oid: null },
+			override_time: unixTimestamp
 		};
 
 		// Updated list until fetch syncs with it (also not persistent)
-		todoArray = [...todoArray, newUserTodo];
+		//todoArray = [...todoArray, newUserTodo];
+		todoArrayOverrides = [...todoArrayOverrides, newUserTodo];
 
 		// prettier-ignore
 		try {
@@ -102,7 +157,7 @@
 			if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`); }
 			// resetInactivityTimer()
 			// getQueue.push(getTodoArray())
-			getTodoArray();
+			//getTodoArray();
 		} catch (error) { fetchError = error; }
 	}
 
@@ -111,13 +166,16 @@
 
 		// Filter it out locally, then sync with server
 		// Server response updates the list with a lag
-		todoArray = todoArray.filter((item) => item._id.$oid !== idToDelete);
+		//todoArray = todoArray.filter((item) => item._id.$oid !== idToDelete);
+		let deletingItem = todoArray.find((item) => item._id.$oid === idToDelete);
+		todoArrayOverrides = todoArrayOverrides.filter((item) => item._id.$oid !== idToDelete);
+		todoArrayOverrides = [...todoArrayOverrides, { ...deletingItem, deleted: true, override_time: Math.floor(Date.now() / 1000) }];
 
 		// prettier-ignore
 		try {
 			const response = await fetch(`/api/todo_items/${idToDelete}`, { method: 'DELETE' });
 			if (!response.ok) {throw new Error(`${response.status} ${response.statusText}`);}
-			getTodoArray();
+			//getTodoArray();
 		} catch (error) { fetchError = error; }
 	}
 
@@ -125,16 +183,12 @@
 		const checkboxHTML = event.currentTarget.closest('button');
 		const targetID = checkboxHTML.value;
 
-		let newTodo = null;
-
-		todoArray = todoArray.map((todo) => {
-			if (todo._id.$oid === targetID) {
-				newTodo = { ...todo, completed: !todo.completed };
-				return newTodo;
-			}
-			return todo;
-		});
-
+		let oldTodo = todoArray.find((todo) => todo._id.$oid === targetID);
+		let newTodo = { ...oldTodo, completed: !oldTodo.completed, override_time: Math.floor(Date.now() / 1000) };
+		// add to overrides
+		todoArrayOverrides = todoArrayOverrides.filter((item) => item._id.$oid !== targetID);
+		todoArrayOverrides = [...todoArrayOverrides, newTodo];
+		
 		// prettier-ignore
 		try {
 			const response = await fetch(`/api/todo_items/${targetID}`, 
@@ -145,7 +199,7 @@
 				})
 			});
 			if (!response.ok) {throw new Error(`${response.status} ${response.statusText}`);}
-			getTodoArray();
+			//getTodoArray();
 		} catch (error) { fetchError = error; }
 	}
 
@@ -161,7 +215,29 @@
 	}
 
 	onMount(async () => {
-		getTodoArray();
+		let f0 = async () => {
+			while (true) {
+				let time = Math.floor(Date.now() / 1000);
+				// remove items that are older than the last todoArrayTime
+				todoArrayOverrides = todoArrayOverrides.filter((item) => item.override_time > todoArrayTime -2);
+				// remove items that have been there for more than 5 seconds in case of a failed request
+				todoArrayOverrides = todoArrayOverrides.filter((item) => !(time - item.override_time > 5));
+				await new Promise((resolve) => setTimeout(resolve, 100));
+			}
+		};
+		let f1 = async () => {
+			while (true) {
+				await getTodoArray();
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+			}
+		};
+		
+		f0();
+		f1();
+		
+		while (true) {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+		}
 	});
 </script>
 
@@ -201,11 +277,11 @@
 			</div>
 		{/if}
 
-		{#each todoArray as item}
+		{#each todoArrayView as item}
 			<div class="todo-item {item.completed ? 'complete' : 'incomplete'}">
 				<div class="item-head">
 					<div id="item-date">{convertUnixTime(item.created_time_utc)}</div>
-
+					<div id="localorserver">{item.override_time !== undefined ? 'Local' : 'Server'}</div>
 					<div class="item-buttons">
 						{#if item.completed === false}
 							<button class="item-button" value={item._id.$oid} on:pointerdown={checkboxTodo}>

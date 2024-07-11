@@ -3,69 +3,24 @@
 	import { CheckSquareFill, Square, Trash } from 'svelte-bootstrap-icons';
 	import { v4 as uuidv4 } from 'uuid';
 
-	// $: console.log('Todo =>', todoArray);
+	$: console.log('Todo =>', todoArray);
 	// $: console.log('Error', fetchError);
 
 	let todoArray = [];
 	let fetchError = null;
-	let getQueue = [];
-
-	let inactivityTimeout = null;
-
-	// function resetInactivityTimer() {
-	// 	clearTimeout(inactivityTimeout);
-	// 	inactivityTimeout = setTimeout(getTodoArray(), 5000);
-	// }
-
-	// let todoArray = [
-	// 	{
-	// 		_id: {
-	// 			$oid: 'c2b4d657-7bd6-4546-b5f1-21a61e995ae9'
-	// 		},
-	// 		owner_user_id: null,
-	// 		title: '1',
-	// 		completed: false
-	// 	},
-	// 	{
-	// 		_id: {
-	// 			$oid: '97d66eec-052b-4036-aa37-8dde5e70589d'
-	// 		},
-	// 		owner_user_id: null,
-	// 		title: '2',
-	// 		completed: false
-	// 	},
-	// 	{
-	// 		_id: {
-	// 			$oid: '1dd7f7ae-5402-4b1c-b2ef-2cdb742851da'
-	// 		},
-	// 		owner_user_id: null,
-	// 		title: '3',
-	// 		completed: false
-	// 	},
-	// 	{
-	// 		_id: {
-	// 			$oid: 'b50625b3-8818-4794-86e0-0843bc87c296'
-	// 		},
-	// 		owner_user_id: null,
-	// 		title: '4',
-	// 		completed: false
-	// 	},
-	// 	{
-	// 		_id: {
-	// 			$oid: '4b57cb55-4afc-4930-8569-2d1ec0be0f22'
-	// 		},
-	// 		owner_user_id: null,
-	// 		title: '5',
-	// 		completed: false
-	// 	}
-	// ];
 
 	async function getTodoArray() {
 		// prettier-ignore
 		try {
 			const response = await fetch('/api/todo_items');
 			if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-			todoArray = await response.json();
+			let responseArray =  await response.json();
+			if (responseArray.length === todoArray.length){
+				todoArray = responseArray;
+			}
+			setTimeout(()=> {
+				getTodoArray()
+			}, 1000);
 		} catch (error) { fetchError = error; }
 	}
 
@@ -102,7 +57,7 @@
 			if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`); }
 			// resetInactivityTimer()
 			// getQueue.push(getTodoArray())
-			getTodoArray();
+			// getTodoArray();
 		} catch (error) { fetchError = error; }
 	}
 
@@ -117,7 +72,7 @@
 		try {
 			const response = await fetch(`/api/todo_items/${idToDelete}`, { method: 'DELETE' });
 			if (!response.ok) {throw new Error(`${response.status} ${response.statusText}`);}
-			getTodoArray();
+			// getTodoArray();
 		} catch (error) { fetchError = error; }
 	}
 
@@ -145,7 +100,7 @@
 				})
 			});
 			if (!response.ok) {throw new Error(`${response.status} ${response.statusText}`);}
-			getTodoArray();
+			// getTodoArray();
 		} catch (error) { fetchError = error; }
 	}
 
@@ -161,6 +116,13 @@
 	}
 
 	onMount(async () => {
+		//
+		try {
+			const response = await fetch('/api/todo_items');
+			if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+			todoArray =  await response.json();
+		} catch (error) { fetchError = error; }
+
 		getTodoArray();
 	});
 </script>
@@ -236,6 +198,62 @@
 </div>
 
 <style>
+
+    :global(body.dark-theme) {
+        /* Input and button */
+        --input-bg: var(--header);
+        --button-bg: var(--select-bg);
+        --button-hover-bg: var(--header);
+        --button-hover-text: black;
+
+        /* Todo items */
+        --todo-bg: #524441;
+        --todo-completed-bg: #3c2d2a;
+        --border: #8b8b8b;
+        --button-svg-hover-bg: var(--select-bg);
+        --scrollbar-track-bg: #3c2d2a;
+        --scrollbar-thumb-bg: var(--todo-bg);
+        --scrollbar-thumb-hover-bg: var(--todo-bg);
+
+        /* Pagination */
+        --pagination-bg: var(--header);
+        --pagination-text: var(--text);
+        --pagination-hover-bg: var(--select-bg);
+        --pagination-hover-text: var(--background);
+
+        --pagination-active-bg: var(--select-bg);
+        --pagination-active-text: var(--text);
+        --pagination-active-hover-bg: var(--select-bg);
+        --pagination-active-hover-text: var(--text);
+    }
+
+    :global(body.light-theme) {
+        /* Input and button */
+        --input-bg: var(--header);
+        --button-bg: var(--select-bg);
+        --button-hover-bg: var(--header);
+        --button-hover-text: black;
+
+        /* Todo items */
+        --todo-bg: #9eb2f8;
+        --border: #757575;
+        --button-svg-hover-bg: var(--background);
+        --scrollbar-track-bg: #c2cbf1;
+        --scrollbar-thumb-bg: var(--todo-bg);
+        --scrollbar-thumb-hover-bg: var(--todo-bg);
+
+        /* Pagination */
+        --pagination-bg: var(--header);
+        --pagination-text: var(--text);
+        --pagination-hover-bg: var(--select-bg);
+        --pagination-hover-text: var(--background);
+
+        --pagination-active-bg: var(--select-bg);
+        --pagination-active-text: var(--text);
+        --pagination-active-hover-bg: var(--select-bg);
+        --pagination-active-hover-text: var(--text);
+    }
+
 	.wrapper {
 		height: calc(100dvh - 50px);
 		width: clamp(0px, 600px, 100%);

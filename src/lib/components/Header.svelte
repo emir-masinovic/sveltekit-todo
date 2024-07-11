@@ -18,7 +18,16 @@
 </script>
 
 <header>
-	<a href="https://kit.svelte.dev/"><img src={logo} alt="svelte_logo" /></a>
+
+	<div class="logo-container">
+		<a href="https://kit.svelte.dev/"><img src={logo} alt="svelte_logo" /></a>
+	</div>
+
+	<nav>
+		<ul>
+			<li><a href="/">Home</a></li>
+		</ul>
+	</nav>
 
 	<select name="select-theme" bind:value={$theme}>
 		<option value="system">System</option>
@@ -28,12 +37,35 @@
 </header>
 
 <style>
+
+	:global(body.dark-theme) {
+			--header: var(--color-surface-mixed-300);
+			--select-bg: var(--color-primary-500);
+			--select-text: var(--background);
+			--select-hover-bg: var(--background);
+			--select-hover-text: var(--text);
+	}
+
+	:global(body.light-theme) {
+      --header: var(--color-primary-500);
+      --select-bg: var(--color-primary-200);
+      --select-text: var(--text);
+      --select-hover-bg: var(--background);
+      --select-hover-text: var(--text);
+	}
+
 	header {
 		background: var(--header);
 		height: 50px;
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		padding: 10px 20px;
+	}
+
+	.logo-container{
+			height: 100%;
+      aspect-ratio: 1/1;
 	}
 
 	img {
@@ -45,10 +77,18 @@
 		scale: 0.9;
 	}
 
+	ul {
+			list-style: none;
+	}
+
+	a:hover{
+			color: var(--color-primary-500);
+	}
+
 	select {
 		background: var(--select-bg);
 		color: var(--select-text);
-		padding: 0 5px;
+		padding: 5px;
 		border: none;
 	}
 
